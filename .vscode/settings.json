@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "exceljs",
+        "pledgecategory"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/d7dcf1e1-4868-40bd-8209-9740f354efea/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/SSTCHRAPISTG002",
+    "appService.deploySubpath": ".",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ]
+}
