@@ -172,6 +172,11 @@ const Contribution = () => {
     } else {
     }
   }
+  var validate = function (e) {
+    var t = e.value
+    e.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3) : t
+    setAmount(e.value)
+  }
   return (
     <CRow>
       <CCol xs={12}>
@@ -319,7 +324,8 @@ const Contribution = () => {
                       type="text"
                       id="amount"
                       placeholder={location.state.row.PledgedAmount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      // onChange={(e) => setAmount(e.target.value)}
+                      onInput={validate}
                       required
                     />
                   </CInputGroup>

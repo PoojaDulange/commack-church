@@ -105,62 +105,66 @@ const Contribution = () => {
     },
   }
   const addList = async () => {
-    let organizationID, peopleID
-    const chResponse = await axios.get('/api/church', {
-      headers: { Authorization: `Bearer ${token.user}` },
-    })
-    const churchData = chResponse.data.data[0]
-    const name = document.getElementById('name').value
-    const date = document.getElementById('date').value
-    const category = document.getElementById('category').value
-    const comment = document.getElementById('comments').value
-    const amt = document.getElementById('amount').value
-    if (name === '' || date === '' || category === '' || comment === '' || amt === '') {
-      alert('Please fill all data')
-      return
-    }
-    if (org === true) {
-      const response = await axios.get(`/api/organization/name/${name}`, {
+    if (org | individual) {
+      let organizationID, peopleID
+      const chResponse = await axios.get('/api/church', {
         headers: { Authorization: `Bearer ${token.user}` },
       })
-      organizationID = response.data.data[0].organizationID
-      peopleID = null
-    }
-    if (individual === true) {
-      const response = await axios.get(`/api/people/email/${name}`, {
-        headers: { Authorization: `Bearer ${token.user}` },
-      })
-      peopleID = response.data.data[0].peopleID
-      organizationID = null
-    }
-    const pledgeResponse = await axios.get('/api/pledgecategory', {
-      headers: { Authorization: `Bearer ${token.user}` },
-    })
-    const pledgeData = pledgeResponse.data.data[0]
-    const filteredPledge = pledgeData.filter((data) => {
-      return data.name === category
-    })
-    const obj = {
-      organizationID,
-      peopleID,
-      churchID: churchData[0].churchID,
-      contributionDate: date,
-      category: category,
-      comments: comment,
-      pledgeAmount: parseFloat(amt).toFixed(2),
-      pledgeID: filteredPledge[0].pledgeID,
-    }
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm('Do You want to make changes') === true) {
-      try {
-        await axios.post('/api/contribution', obj, {
+      const churchData = chResponse.data.data[0]
+      const name = document.getElementById('name').value
+      const date = document.getElementById('date').value
+      const category = document.getElementById('category').value
+      const comment = document.getElementById('comments').value
+      const amt = document.getElementById('amount').value
+      if (name === '' || date === '' || category === '' || comment === '' || amt === '') {
+        alert('Please fill all data')
+        return
+      }
+      if (org === true) {
+        const response = await axios.get(`/api/organization/name/${name}`, {
           headers: { Authorization: `Bearer ${token.user}` },
         })
-        getData()
-        document.getElementById('comments').value = ''
-        document.getElementById('amount').value = ''
-      } catch (err) {}
+        organizationID = response.data.data[0].organizationID
+        peopleID = null
+      }
+      if (individual === true) {
+        const response = await axios.get(`/api/people/email/${name}`, {
+          headers: { Authorization: `Bearer ${token.user}` },
+        })
+        peopleID = response.data.data[0].peopleID
+        organizationID = null
+      }
+      const pledgeResponse = await axios.get('/api/pledgecategory', {
+        headers: { Authorization: `Bearer ${token.user}` },
+      })
+      const pledgeData = pledgeResponse.data.data[0]
+      const filteredPledge = pledgeData.filter((data) => {
+        return data.name === category
+      })
+      const obj = {
+        organizationID,
+        peopleID,
+        churchID: churchData[0].churchID,
+        contributionDate: date,
+        category: category,
+        comments: comment,
+        pledgeAmount: parseFloat(amt).toFixed(2),
+        pledgeID: filteredPledge[0].pledgeID,
+      }
+      // eslint-disable-next-line no-restricted-globals
+      if (confirm('Do You want to make changes') === true) {
+        try {
+          await axios.post('/api/contribution', obj, {
+            headers: { Authorization: `Bearer ${token.user}` },
+          })
+          getData()
+          document.getElementById('comments').value = ''
+          document.getElementById('amount').value = ''
+        } catch (err) {}
+      } else {
+      }
     } else {
+      alert('Please Select the radio button')
     }
   }
   const handleClick = (row, e) => {

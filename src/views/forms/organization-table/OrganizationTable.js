@@ -71,7 +71,7 @@ const OrganizationTable = () => {
     {
       name: <strong>URL</strong>,
       selector: (row) => (
-        <a href={row.url} target="_blank" rel="noreferrer">
+        <a href={'//' + row.url} target="_blank" rel="noreferrer">
           {row.url}
         </a>
       ),

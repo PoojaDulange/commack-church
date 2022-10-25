@@ -70,6 +70,7 @@ const PledgeAdd = () => {
           console.log(err)
         }
       }
+      navigate('/forms/pledged-category')
     } else {
     }
   }
