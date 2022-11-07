@@ -29,6 +29,8 @@ const Contribution = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [pledge, setPledge] = useState([])
+  const regex = /([0-9]*[\.|\,]{0,1}[0-9]{0,2})/s
+
   const getDate = async () => {
     const response1 = await axios.get('/api/church', {
       headers: { Authorization: `Bearer ${token.user}` },
@@ -113,6 +115,11 @@ const Contribution = () => {
     } else {
     }
   }
+  const handleChange = (e) => {
+    const value = e.target.value.match(regex)[0]
+    console.log(value)
+    setAmount(value)
+  }
   const handleEdit = async () => {
     let peopleID, organizationID
     if (location.state.type === 'org') {
@@ -172,11 +179,7 @@ const Contribution = () => {
     } else {
     }
   }
-  var validate = function (e) {
-    var t = e.value
-    e.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3) : t
-    setAmount(e.value)
-  }
+
   return (
     <CRow>
       <CCol xs={12}>
@@ -287,8 +290,9 @@ const Contribution = () => {
                     <CFormInput
                       type="text"
                       id="amount"
+                      value={amount}
                       placeholder="Enter Pledged Amount"
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={handleChange}
                       required
                     />
                   </CInputGroup>
@@ -324,8 +328,8 @@ const Contribution = () => {
                       type="text"
                       id="amount"
                       placeholder={location.state.row.PledgedAmount}
-                      // onChange={(e) => setAmount(e.target.value)}
-                      onInput={validate}
+                      value={amount}
+                      onChange={handleChange}
                       required
                     />
                   </CInputGroup>

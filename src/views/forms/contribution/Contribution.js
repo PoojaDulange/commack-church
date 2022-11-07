@@ -15,6 +15,9 @@ import axios from 'src/axios'
 import { UserContext } from '../../../context/UserContext.js'
 
 const Contribution = () => {
+  const regex = /([0-9]*[\.|\,]{0,1}[0-9]{0,2})/s
+  const [amount, setAmount] = useState('')
+
   const token = useContext(UserContext)
 
   const navigate = useNavigate()
@@ -128,9 +131,11 @@ const Contribution = () => {
         peopleID = null
       }
       if (individual === true) {
-        const response = await axios.get(`/api/people/email/${name}`, {
+        const email = document.getElementById('email').value
+        const response = await axios.get(`/api/people/email/${email}`, {
           headers: { Authorization: `Bearer ${token.user}` },
         })
+        console.log(response)
         peopleID = response.data.data[0].peopleID
         organizationID = null
       }
@@ -159,7 +164,8 @@ const Contribution = () => {
           })
           getData()
           document.getElementById('comments').value = ''
-          document.getElementById('amount').value = ''
+          setAmount('')
+          document.getElementById('email').setAttribute('disabled', true)
         } catch (err) {}
       } else {
       }
@@ -216,7 +222,10 @@ const Contribution = () => {
       })
       const user1 = response.data.data[0]
       user1.map((data) => {
-        setUser((user) => [...user, data.email])
+        setUser((user) => [
+          ...user,
+          { email: data.email, name: data.firstName + ' ' + data.lastName },
+        ])
       })
     }
     let name
@@ -275,7 +284,11 @@ const Contribution = () => {
     setData1((data1) => [data1, ...orgData])
     setData2((data2) => [data2, ...data])
   }, [org, individual])
-
+  const handleChange = (e) => {
+    const value = e.target.value.match(regex)[0]
+    console.log(value)
+    setAmount(value)
+  }
   return (
     <div className="text-center">
       <CRow className="justify-content-center mb-3">
@@ -308,20 +321,40 @@ const Contribution = () => {
               style={{ width: '100%', height: 'auto' }}
             >
               {individual === true && (
-                <select
-                  className="form-select"
-                  aria-label="Select Name"
-                  id="name"
-                  style={{ width: '10em', height: 'auto' }}
-                >
-                  {user.map((data, index) => {
-                    return (
-                      <option key={index} value={data}>
-                        {data}
-                      </option>
-                    )
-                  })}
-                </select>
+                <>
+                  <select
+                    className="form-select"
+                    aria-label="Select Name"
+                    id="name"
+                    onChange={() => {
+                      document.getElementById('email').removeAttribute('disabled')
+                    }}
+                    style={{ width: '10em', height: 'auto' }}
+                  >
+                    {user.map((data, index) => {
+                      return (
+                        <option key={index} value={data.name}>
+                          {data.name}
+                        </option>
+                      )
+                    })}
+                  </select>
+                  <select
+                    className="form-select"
+                    aria-label="Select Email"
+                    id="email"
+                    disabled
+                    style={{ width: '10em', height: 'auto' }}
+                  >
+                    {user.map((data, index) => {
+                      return (
+                        <option key={index} value={data.email}>
+                          {data.email}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </>
               )}
               {org === true && (
                 <select
@@ -371,7 +404,9 @@ const Contribution = () => {
                 type="text"
                 id="amount"
                 placeholder="Enter Pledge Amount"
+                value={amount}
                 style={{ width: '10em', height: 'auto' }}
+                onChange={handleChange}
                 required
               />
               <CButton type="submit" onClick={addList} style={{ width: '10em', height: 'auto' }}>

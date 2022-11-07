@@ -25,21 +25,66 @@ const Login = () => {
 
   const navigate = useNavigate()
   const [login, setLogin] = useState(true)
-  const handleClick = async () => {
-    try {
-      const obj = {
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value,
-      }
+  const [credentials, setCredentials] = useState({
+    condition: false,
+    field: null,
+  })
 
-      const response = await axios.post('/api/users/login', obj)
-      console.log(response)
-      setLogin(true)
-      dispatch({ type: 'Login', payload: response.data.token })
-      navigate('/dashboard1')
-    } catch (err) {
-      console.log(err)
-      setLogin(false)
+  const handleClick = async () => {
+    if (
+      document.getElementById('email').value === '' ||
+      document.getElementById('password').value === ''
+    ) {
+      console.log('One field is empty')
+      if (
+        document.getElementById('email').value === '' &&
+        document.getElementById('password').value === ''
+      ) {
+        setCredentials({
+          condition: true,
+          field: 'Email & Password',
+        })
+      } else {
+        if (
+          document.getElementById('email').value === '' &&
+          document.getElementById('password').value !== ''
+        ) {
+          setCredentials({
+            condition: true,
+            field: 'Email',
+          })
+        } else {
+          if (
+            document.getElementById('email').value !== '' &&
+            document.getElementById('password').value === ''
+          ) {
+            setCredentials({
+              condition: true,
+              field: 'Password',
+            })
+          }
+        }
+      }
+    } else {
+      setCredentials({
+        condition: false,
+        field: null,
+      })
+      try {
+        const obj = {
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value,
+        }
+
+        const response = await axios.post('/api/users/login', obj)
+        // console.log(response)
+        setLogin(true)
+        dispatch({ type: 'Login', payload: response.data.token })
+        navigate('/dashboard1')
+      } catch (err) {
+        console.log(err)
+        setLogin(false)
+      }
     }
   }
   return (
@@ -58,21 +103,19 @@ const Login = () => {
                       <p className="text-medium-emphasis">Sign In to your account</p>
                       <CInputGroup className="mb-3">
                         <CInputGroupText>@</CInputGroupText>
-                        <CFormInput id="email" placeholder="Email" autoComplete="username" />
+                        <CFormInput id="email" placeholder="Email" required />
+                        {}
                       </CInputGroup>
                       <CInputGroup className="mb-4">
                         <CInputGroupText>
                           <CIcon icon={cilLockLocked} />
                         </CInputGroupText>
-                        <CFormInput
-                          id="password"
-                          type="password"
-                          placeholder="Password"
-                          autoComplete="current-password"
-                        />
+                        <CFormInput id="password" type="password" placeholder="Password" required />
                       </CInputGroup>
                       {!login && <p style={{ color: 'red' }}>Please check your credentials</p>}
-
+                      {credentials.condition && (
+                        <p style={{ color: 'red' }}>Please Fill {credentials.field} fields</p>
+                      )}
                       <CRow>
                         <CCol xs={6}>
                           <CButton color="primary" className="px-4" onClick={handleClick}>

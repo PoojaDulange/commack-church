@@ -1,0 +1,26 @@
+import React from 'react'
+import { CModal } from '@coreui/react'
+import { CButton } from '@coreui/react'
+
+// eslint-disable-next-line react/prop-types
+export const IdleModal = ({ showModal, handleClose, handleLogout, remainingTime }) => {
+  console.log('&&&')
+  return (
+    <CModal show={showModal} onHide={handleClose}>
+      <CModal.Header closeButton>
+        <CModal.Title>You Have Been Idle!</CModal.Title>
+      </CModal.Header>
+      <CModal.Body>You Will Get Timed Out. You want to stay?</CModal.Body>
+      <CModal.Footer>
+        <CButton variant="danger" onClick={handleLogout}>
+          Logout
+        </CButton>
+        <CButton variant="primary" onClick={handleClose}>
+          Stay
+        </CButton>
+      </CModal.Footer>
+    </CModal>
+  )
+}
+
+// export default IdleModal
