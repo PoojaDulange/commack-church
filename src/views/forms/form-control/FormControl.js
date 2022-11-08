@@ -393,7 +393,9 @@ const FormControl = () => {
                       id="stateID"
                       aria-label="Default select example"
                     >
-                      <option value="">Please select state</option>
+                      <option value={placeholder.stateID} placeholder={placeholder.stateID}>
+                        {placeholder.stateID}
+                      </option>
 
                       {state.map((state, index) => {
                         return (

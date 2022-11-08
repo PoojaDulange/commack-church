@@ -29,17 +29,24 @@ const PledgeAdd = () => {
   const navigate = useNavigate()
   const [editData, setEditData] = useState({})
   const getByID = async (id) => {
-    console.log(id)
     setId(id)
-    let d = await axios.get(`/api/pledgecategory/${id}`, {
-      headers: { Authorization: `Bearer ${token.user}` },
-    })
-    setEditData(d.data.data[0])
+    if (id !== 'null') {
+      try {
+        let d = await axios.get(`/api/pledgecategory/${id}`, {
+          headers: { Authorization: `Bearer ${token.user}` },
+        })
+        setEditData(d.data.data[0])
+      } catch (err) {
+        console.log(err)
+      }
+    }
   }
   useEffect(() => {
     let i = localStorage.getItem('pledgeID')
-    if (i !== null) {
+    if (i !== 'null') {
       getByID(i)
+    } else {
+      setId('null')
     }
   }, [])
   const addPledge = async () => {
@@ -50,22 +57,16 @@ const PledgeAdd = () => {
     }
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Do You want to make changes') === true) {
+      console.log('Here')
       if (id === 'null') {
-        await axios
-          .post('/api/pledgecategory/', obj, {
-            headers: { Authorization: `Bearer ${token.user}` },
-          })
-          .then(function (res) {})
-          .catch(function (err) {
-            console.log(err)
-          })
-        navigate('/forms/pledged-category')
+        await axios.post('/api/pledgecategory/', obj, {
+          headers: { Authorization: `Bearer ${token.user}` },
+        })
       } else {
         try {
           await axios.patch('/api/pledgecategory', obj, {
             headers: { Authorization: `Bearer ${token.user}` },
           })
-          navigate('/forms/pledged-category')
         } catch (err) {
           console.log(err)
         }
