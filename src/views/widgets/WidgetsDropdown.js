@@ -13,10 +13,32 @@ const WidgetsDropdown = () => {
       headers: { Authorization: `Bearer ${token.user}` },
     })
     setLength((length) => [...length, response.data.data[0].length + 1])
+
+    const response1 = await axios.get('/api/people', {
+      headers: { Authorization: `Bearer ${token.user}` },
+    })
+    setLength((length) => [...length, response1.data.data[0].length + 1])
+
+    const response2 = await axios.get('/api/contribution', {
+      headers: { Authorization: `Bearer ${token.user}` },
+    })
+    const arr = response2.data.data[0]
+    let sum = 0
+    arr.map((data) => {
+      sum = sum + data.pledgeAmount
+    })
+    sum = sum.toFixed(2)
+    console.log(sum)
+    // eslint-disable-next-line no-restricted-globals
+    setLength((length) => [...length, sum])
+
+    const response3 = await axios.get('/api/pledgecategory', {
+      headers: { Authorization: `Bearer ${token.user}` },
+    })
+    setLength((length) => [...length, response3.data.data[0].length + 1])
   }
   useEffect(() => {
     getData()
-    console.log(length)
   }, [])
   return (
     <CRow>
@@ -35,7 +57,7 @@ const WidgetsDropdown = () => {
           <CWidgetStatsA
             className="my-4"
             color="info"
-            value={<h4 className="my-3">#1500</h4>}
+            value={<h4 className="my-3">#{length[1]}</h4>}
             title={<h4 className="my-3">Individual</h4>}
           />
         </Link>
@@ -45,7 +67,7 @@ const WidgetsDropdown = () => {
           <CWidgetStatsA
             className="my-4"
             color="warning"
-            value={<h4 className="my-3">$2000</h4>}
+            value={<h4 className="my-3">${length[2]}</h4>}
             title={<h4 className="my-3">Contribution</h4>}
           />
         </Link>
@@ -56,7 +78,7 @@ const WidgetsDropdown = () => {
           <CWidgetStatsA
             className="my-4"
             color="danger"
-            value={<h4 className="my-3">#3</h4>}
+            value={<h4 className="my-3">#{length[3]}</h4>}
             title={<h4 className="my-3">Pledged Categories</h4>}
           />
         </Link>
