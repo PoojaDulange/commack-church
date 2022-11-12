@@ -32,7 +32,7 @@ export default function IdleComponent() {
   const idleTimer = useIdleTimer({
     crossTab: true,
     ref: idleTimeRef,
-    timeout: 60 * 0.5 * 1000,
+    timeout: 60 * 5 * 1000,
     onIdle: onIdle,
     onActive: handleOnActive,
   })

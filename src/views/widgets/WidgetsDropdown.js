@@ -1,8 +1,23 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react'
 import { CRow, CCol, CWidgetStatsA } from '@coreui/react'
 import { Link } from 'react-router-dom'
+import axios from 'src/axios'
+import { UserContext } from 'src/context/UserContext'
+import { useState } from 'react'
 
 const WidgetsDropdown = () => {
+  const [length, setLength] = useState([])
+  const token = useContext(UserContext)
+  const getData = async () => {
+    const response = await axios.get('/api/organization', {
+      headers: { Authorization: `Bearer ${token.user}` },
+    })
+    setLength((length) => [...length, response.data.data[0].length + 1])
+  }
+  useEffect(() => {
+    getData()
+    console.log(length)
+  }, [])
   return (
     <CRow>
       <CCol sm={6} lg={3}>
@@ -10,7 +25,7 @@ const WidgetsDropdown = () => {
           <CWidgetStatsA
             className="my-4"
             color="secondary"
-            value={<h4 className="my-3">#500</h4>}
+            value={<h4 className="my-3">#{length[0]}</h4>}
             title={<h4 className="my-3">Organization</h4>}
           />
         </Link>

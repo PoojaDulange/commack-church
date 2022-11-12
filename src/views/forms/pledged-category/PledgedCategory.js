@@ -18,7 +18,7 @@ const PledgedCategory = () => {
       headers: { Authorization: `Bearer ${token.user}` },
     })
     const data1 = d.data.data[0]
-    setData([...data, ...data1])
+    setData([...data, ...data1.reverse()])
   }
   useEffect(() => {
     getData()

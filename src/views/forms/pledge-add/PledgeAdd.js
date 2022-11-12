@@ -51,6 +51,7 @@ const PledgeAdd = () => {
   }, [])
   const addPledge = async () => {
     const obj = { name, description, id }
+
     if (obj.name === '' || obj.description === '') {
       document.querySelector('#fail-message').innerHTML = 'Please fill out field(s)'
       return
@@ -58,23 +59,27 @@ const PledgeAdd = () => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Do You want to make changes') === true) {
       console.log('Here')
-      if (id === 'null') {
-        await axios.post('/api/pledgecategory/', obj, {
-          headers: { Authorization: `Bearer ${token.user}` },
-        })
-      } else {
-        try {
-          await axios.patch('/api/pledgecategory', obj, {
-            headers: { Authorization: `Bearer ${token.user}` },
-          })
-        } catch (err) {
-          console.log(err)
-        }
-      }
+      await axios.post('/api/pledgecategory/', obj, {
+        headers: { Authorization: `Bearer ${token.user}` },
+      })
+
       navigate('/forms/pledged-category')
     } else {
     }
   }
+  const editPledge = async () => {
+    let obj = editData
+    console.log(obj)
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Do You want to make changes') === true) {
+      await axios.patch('/api/pledgecategory/', obj, {
+        headers: { Authorization: `Bearer ${token.user}` },
+      })
+      navigate('/forms/pledged-category')
+    } else {
+    }
+  }
+
   return (
     <CRow>
       <CCol xs={12}>
@@ -97,6 +102,7 @@ const PledgeAdd = () => {
                   placeholder={id === 'null' ? 'Enter Pledge Name' : editData.name}
                   onChange={(e) => {
                     setName(e.target.value)
+                    editData.name = e.target.value
                   }}
                   value={name}
                   required
@@ -115,6 +121,7 @@ const PledgeAdd = () => {
                   placeholder={id === 'null' ? 'Enter Description' : editData.description}
                   onChange={(e) => {
                     setDescription(e.target.value)
+                    editData.description = e.target.value
                   }}
                   value={description}
                   required
@@ -123,9 +130,16 @@ const PledgeAdd = () => {
               <span id="fail-message" style={{ color: 'red' }}></span>
 
               <div className="d-md-flex justify-content-md-center gap-2">
-                <CButton type="submit" onClick={addPledge}>
-                  Submit
-                </CButton>
+                {id === 'null' && (
+                  <CButton type="submit" onClick={addPledge}>
+                    Submit
+                  </CButton>
+                )}
+                {id !== 'null' && (
+                  <CButton type="submit" onClick={editPledge}>
+                    Submit
+                  </CButton>
+                )}
                 <Link to="/forms/pledged-category/">
                   <CButton type="submit">Cancel</CButton>
                 </Link>

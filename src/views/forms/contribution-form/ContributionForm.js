@@ -172,7 +172,7 @@ const Contribution = () => {
         await axios.patch('/api/contribution', obj, {
           headers: { Authorization: `Bearer ${token.user}` },
         })
-        navigate('/forms/contribution/')
+        navigate('/forms/contribution/', { state: { type: location.state.type } })
       } catch (err) {
         console.log(err)
       }
@@ -249,7 +249,7 @@ const Contribution = () => {
                   aria-label="Default select example"
                   required
                 >
-                  <option value="">Please select category</option>
+                  <option value="location.state.row.category">{location.state.row.category}</option>
 
                   {pledge.map((state, index) => {
                     return (

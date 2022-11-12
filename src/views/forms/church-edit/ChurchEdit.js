@@ -55,33 +55,35 @@ const ChurchForm = () => {
     getData()
   }, [])
   const handleClick = async () => {
-    const mobileNo = document.getElementById('number').value.split('-').join('')
-    const zipcode = document.getElementById('zipcode').value.split('-').join('')
-    const obj = {
-      churchID: data.churchID,
-      name: document.getElementById('name').value,
-      description: document.getElementById('description').value,
-      address1: document.getElementById('address1').value,
-      address2: document.getElementById('address2').value,
-      city: document.getElementById('city').value,
-      stateID: document.getElementById('stateID').value,
-      zipcode,
-      mobileNo,
-      email: data.email,
-      churchURL: document.getElementById('url').value,
-    }
+    console.log(data)
+    let obj = data
+    obj.mobileNo = obj.mobileNo.split('-').join('')
+    obj.zipcode = obj.zipcode.split('-').join('')
+    // const obj = {
+    //   churchID: data.churchID,
+    //   name: document.getElementById('name').value,
+    //   description: document.getElementById('description').value,
+    //   address1: document.getElementById('address1').value,
+    //   address2: document.getElementById('address2').value,
+    //   city: document.getElementById('city').value,
+    //   stateID: document.getElementById('stateID').value,
+    //   zipcode,
+    //   mobileNo,
+    //   email: data.email,
+    //   churchURL: document.getElementById('url').value,
+    // }
 
-    let inputFields = document.getElementsByClassName('formInput')
-    if (obj.stateID === '') {
-      document.querySelector('#fail-message').innerHTML = 'Please fill out field(s)'
-    }
+    // let inputFields = document.getElementsByClassName('formInput')
+    // if (obj.stateID === '') {
+    //   document.querySelector('#fail-message').innerHTML = 'Please fill out field(s)'
+    // }
 
-    for (var i = 0; i < inputFields.length; i++) {
-      if (inputFields[i].value === '') {
-        document.querySelector('#fail-message').innerHTML =
-          'Please fill out ' + inputFields[i].getAttribute('name') + ' field(s)'
-      }
-    }
+    // for (var i = 0; i < inputFields.length; i++) {
+    //   if (inputFields[i].value === '') {
+    //     document.querySelector('#fail-message').innerHTML =
+    //       'Please fill out ' + inputFields[i].getAttribute('name') + ' field(s)'
+    //   }
+    // }
     const v4 = TELNO_REGEX.test(obj.mobileNo)
     const v5 = ZIP_REGEX.test(obj.zipcode)
     if (v4 === false) {
@@ -147,6 +149,7 @@ const ChurchForm = () => {
                     type="text"
                     id="name"
                     placeholder={data.name}
+                    onChange={(e) => (data.name = e.target.value)}
                     required
                   />
                 </CInputGroup>
@@ -162,6 +165,7 @@ const ChurchForm = () => {
                     rows="3"
                     className="formInput"
                     placeholder={data.description}
+                    onChange={(e) => (data.description = e.target.value)}
                     required
                   ></CFormTextarea>
                 </CInputGroup>
@@ -177,6 +181,7 @@ const ChurchForm = () => {
                     type="text"
                     id="address1"
                     placeholder={data.address1}
+                    onChange={(e) => (data.address1 = e.target.value)}
                     required
                   />
                 </CInputGroup>
@@ -185,7 +190,12 @@ const ChurchForm = () => {
                   <CInputGroupText>
                     <CIcon icon={cilLocationPin} />
                   </CInputGroupText>
-                  <CFormInput type="text" id="address2" placeholder={data.address2} />
+                  <CFormInput
+                    type="text"
+                    id="address2"
+                    placeholder={data.address2}
+                    onChange={(e) => (data.address2 = e.target.value)}
+                  />
                 </CInputGroup>
                 <CFormLabel htmlFor="city">
                   City<span style={{ color: 'red' }}>*</span>
@@ -199,6 +209,7 @@ const ChurchForm = () => {
                     type="text"
                     id="city"
                     placeholder={data.city}
+                    onChange={(e) => (data.city = e.target.value)}
                     required
                   />
                 </CInputGroup>
@@ -213,9 +224,10 @@ const ChurchForm = () => {
                     className="form-select"
                     id="stateID"
                     aria-label="Default select example"
+                    onChange={(e) => (data.stateID = e.target.value)}
                     required
                   >
-                    <option value="">Select State</option>
+                    <option value={data.stateID}>{data.stateID}</option>
                     {state.map((state, index) => {
                       return (
                         <option key={index} value={state.stateID}>
@@ -240,6 +252,7 @@ const ChurchForm = () => {
                     minLength={9}
                     maxLength={9}
                     onBlur={handleZip}
+                    onChange={(e) => (data.zipcode = e.target.value)}
                     required
                   />
                 </CInputGroup>
@@ -262,6 +275,7 @@ const ChurchForm = () => {
                     maxLength={10}
                     placeholder={data.mobileNo}
                     onBlur={handleNumber}
+                    onChange={(e) => (data.mobileNo = e.target.value)}
                     required
                   />
                 </CInputGroup>
@@ -275,6 +289,7 @@ const ChurchForm = () => {
                     type="text"
                     id="url"
                     placeholder={data.churchURL}
+                    onChange={(e) => (data.churchURL = e.target.value)}
                     required
                   />
                 </CInputGroup>

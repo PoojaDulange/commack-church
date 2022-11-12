@@ -203,26 +203,53 @@ const FormControl = () => {
     }
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Do You want to make changes') === true) {
-      if (id === 0) {
-        try {
-          await axios.post('/api/people/', obj, {
-            headers: { Authorization: `Bearer ${token.user}` },
-          })
-          navigate('/forms/people-table/')
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        try {
-          axios.patch('/api/people/', obj, {
-            headers: { Authorization: `Bearer ${token.user}` },
-          })
-          navigate('/forms/people-table/')
-        } catch (err) {
-          console.log(err)
-        }
+      // if (id === 0) {
+      try {
+        await axios.post('/api/people/', obj, {
+          headers: { Authorization: `Bearer ${token.user}` },
+        })
+        navigate('/forms/people-table/')
+      } catch (err) {
+        console.log(err)
       }
+      // } else {
+      //   try {
+      //     axios.patch('/api/people/', obj, {
+      //       headers: { Authorization: `Bearer ${token.user}` },
+      //     })
+      //     navigate('/forms/people-table/')
+      //   } catch (err) {
+      //     console.log(err)
+      //   }
+      // }
     } else {
+    }
+  }
+  const editPeople = async () => {
+    let obj = placeholder
+    console.log(obj)
+
+    const v3 = TELNO_REGEX.test(obj.telNo)
+    const v4 = TELNO_REGEX.test(obj.mobileNo)
+    const v5 = ZIPCODE.test(obj.zipcode)
+    if (v3 === false || v4 === false) {
+      setNumberError('Invalid Number')
+      return
+    }
+    if (ZIPCODE.test(zipcode)) {
+      setNumberError('Invalid Zipcode')
+      return
+    }
+    obj.mobileNo = obj.mobileNo.split('-').join('')
+    obj.telNo = obj.telNo.split('-').join('')
+    obj.zipcode = obj.zipcode.split('-').join('')
+
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Do You want to make changes') === true) {
+      await axios.patch('/api/organization', obj, {
+        headers: { Authorization: `Bearer ${token.user}` },
+      })
+      navigate('/forms/people-table/')
     }
   }
   const handleZip = (e) => {
@@ -251,6 +278,7 @@ const FormControl = () => {
   useEffect(() => {
     if (Data === 'edit') {
       const data = location.state
+      console.log(data)
       setPlaceholder({ ...placeholder, ...data })
     }
     if (Data === 'add') {
@@ -261,6 +289,7 @@ const FormControl = () => {
         address1: 'Enter Address1',
         address2: 'Enter Address2',
         city: 'Enter City',
+        stateID: 'Please select StateID',
         zipcode: 'Enter Zipcode',
         telNo: 'Enter Telephone No',
         mobileNo: 'Enter Mobile No',
@@ -393,9 +422,7 @@ const FormControl = () => {
                       id="stateID"
                       aria-label="Default select example"
                     >
-                      <option value={placeholder.stateID} placeholder={placeholder.stateID}>
-                        {placeholder.stateID}
-                      </option>
+                      <option value={placeholder.stateID}>{placeholder.stateID}</option>
 
                       {state.map((state, index) => {
                         return (
@@ -557,7 +584,8 @@ const FormControl = () => {
                     </span>
                   )}
                   <div className="gap-2 d-md-flex justify-content-md-center">
-                    <CButton onClick={addPeople}>Submit</CButton>
+                    {Data === 'add' && <CButton onClick={addPeople}>Submit</CButton>}
+                    {Data === 'edit' && <CButton onClick={editPeople}>Submit</CButton>}
 
                     <Link to="/forms/people-table/">
                       <CButton>Cancel</CButton>

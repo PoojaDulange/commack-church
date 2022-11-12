@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import {
   CButton,
   CCol,
@@ -17,6 +17,7 @@ import { UserContext } from '../../../context/UserContext.js'
 const Contribution = () => {
   const regex = /([0-9]*[\.|\,]{0,1}[0-9]{0,2})/s
   const [amount, setAmount] = useState('')
+  const location = useLocation()
 
   const token = useContext(UserContext)
 
@@ -33,12 +34,12 @@ const Contribution = () => {
   const [individual, setIndividual] = useState(false)
 
   const handleOrgChange = () => {
-    setOrg(true)
     setIndividual(false)
+    setOrg(true)
   }
   const handleIndChange = () => {
-    setIndividual(true)
     setOrg(false)
+    setIndividual(true)
   }
   const column = [
     {
@@ -273,11 +274,23 @@ const Contribution = () => {
       headers: { Authorization: `Bearer ${token.user}` },
     })
     const pledge = response1.data.data[0]
+    console.log(pledge)
     setPCategory([...pCategory, ...pledge])
   }
   useEffect(() => {
+    // if (location.state) {
+    //   if (location.state.type === 'org') {
+    //     setOrg(true)
+    //   }
+    //   if (location.state.type === 'ind') {
+    //     setOrg(true)
+    //   }
+    // }
     display()
     getDate()
+    if (!location.state) {
+      alert('Please select radio button(organization/Individual) before proceeding further')
+    }
   }, [])
   useEffect(() => {
     getData()

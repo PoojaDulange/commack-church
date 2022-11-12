@@ -25,6 +25,7 @@ import {
 } from '@coreui/icons'
 import axios from '../../../axios.js'
 import { UserContext } from '../../../context/UserContext.js'
+import emptyCache from 'src/emptyCache.js'
 
 const USER_REGEX = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
@@ -169,22 +170,52 @@ const OrganizationForm = () => {
         })
         navigate('/forms/organization-table')
       }
-      if (Data === 'edit') {
-        await axios.patch('/api/organization', obj, {
-          headers: { Authorization: `Bearer ${token.user}` },
-        })
-        navigate('/forms/organization-table')
-      }
+      // if (Data === 'edit') {
+      //   console.log('obj', obj)
+      //   await axios.patch('/api/organization', obj, {
+      //     headers: { Authorization: `Bearer ${token.user}` },
+      //   })
+      //   navigate('/forms/organization-table')
+      // }
     } else {
     }
   }
-
+  const handleClick1 = async () => {
+    let obj = placeholder
+    const v3 = TELNO_REGEX.test(obj.telNo)
+    const v4 = TELNO_REGEX.test(obj.mobileNo)
+    const v5 = ZIP_REGEX.test(obj.zipcode)
+    if (v3 === false || v4 === false) {
+      setNumberError('Invalid Number')
+      return
+    } else {
+      setNumberError('')
+    }
+    if (!v5) {
+      setZipError('Invalid Zipcode')
+      return
+    } else {
+      setZipError('')
+    }
+    obj.mobileNo = obj.mobileNo.split('-').join('')
+    obj.telNo = obj.telNo.split('-').join('')
+    obj.zipcode = obj.zipcode.split('-').join('')
+    obj.enrolledOn = obj.enrolledOn.split('T')[0]
+    if (confirm('Do You want to make changes') === true) {
+      await axios.patch('/api/organization', obj, {
+        headers: { Authorization: `Bearer ${token.user}` },
+      })
+      navigate('/forms/organization-table')
+    }
+  }
   useEffect(() => {
     if (Data === 'edit') {
       const data = location.state
       setPlaceholder({ ...placeholder, ...data })
     }
     if (Data === 'add') {
+      emptyCache()
+      disableDate()
       const obj = {
         name: 'Enter Name',
         address1: 'Enter Address1',
@@ -192,7 +223,7 @@ const OrganizationForm = () => {
         city: 'Enter city',
         stateID: 'Please select state',
         email: 'Enter Email',
-        enrolledOn: 'Enter Enrollment Date',
+        enrolledOn: 'Enter date',
         mobileNo: 'Enter Mobile No',
         telNo: 'Enter Telephone No.',
         url: 'Enter URL',
@@ -201,8 +232,8 @@ const OrganizationForm = () => {
       setPlaceholder({ ...placeholder, ...obj })
     }
     getData()
-    disableDate()
   }, [])
+
   const disableDate = () => {
     var today, dd, mm, yyyy
     today = new Date()
@@ -216,7 +247,8 @@ const OrganizationForm = () => {
       mm = '0' + mm
     }
     const day = yyyy + '-' + mm + '-' + dd
-    return day
+    console.log(day)
+    document.getElementById('date').value = day
   }
   const handleZip = (e) => {
     e.preventDefault()
@@ -254,6 +286,7 @@ const OrganizationForm = () => {
                   id="name"
                   className="formInput"
                   placeholder={placeholder.name}
+                  onChange={(e) => (placeholder.name = e.target.value)}
                   required
                 />
               </CInputGroup>
@@ -268,6 +301,7 @@ const OrganizationForm = () => {
                   id="add1"
                   className="formInput"
                   placeholder={placeholder.address1}
+                  onChange={(e) => (placeholder.address1 = e.target.value)}
                   required
                 />
               </CInputGroup>
@@ -276,7 +310,11 @@ const OrganizationForm = () => {
                 <CInputGroupText>
                   <CIcon icon={cilLocationPin} />
                 </CInputGroupText>
-                <CFormInput id="add2" placeholder={placeholder.address2} />
+                <CFormInput
+                  id="add2"
+                  placeholder={placeholder.address2}
+                  onChange={(e) => (placeholder.address2 = e.target.value)}
+                />
               </CInputGroup>
               <CFormLabel>
                 City<span style={{ color: 'red' }}>*</span>
@@ -289,6 +327,7 @@ const OrganizationForm = () => {
                   id="city"
                   className="formInput"
                   placeholder={placeholder.city}
+                  onChange={(e) => (placeholder.city = e.target.value)}
                   required
                 />
               </CInputGroup>
@@ -304,6 +343,7 @@ const OrganizationForm = () => {
                   className="form-select"
                   id="stateID"
                   aria-label="Default select example"
+                  onChange={(e) => (placeholder.stateID = e.target.value)}
                   required
                 >
                   <option value={placeholder.stateID}>{placeholder.stateID}</option>
@@ -330,6 +370,7 @@ const OrganizationForm = () => {
                   maxLength={9}
                   minLength={9}
                   onBlur={handleZip}
+                  onChange={(e) => (placeholder.zipcode = e.target.value)}
                   required
                 />
               </CInputGroup>
@@ -351,6 +392,7 @@ const OrganizationForm = () => {
                   minLength={10}
                   placeholder={placeholder.telNo}
                   onBlur={handleNumber}
+                  onChange={(e) => (placeholder.telNo = e.target.value)}
                   required
                 />
               </CInputGroup>
@@ -369,10 +411,11 @@ const OrganizationForm = () => {
                   maxLength={10}
                   minLength={10}
                   onBlur={handleNumber}
+                  onChange={(e) => (placeholder.mobileNo = e.target.value)}
                   required
                 />
               </CInputGroup>
-              {numberError !== 'Invalid Number' && <p style={{ color: 'red' }}>{numberError}</p>}
+              {numberError === 'Invalid Number' && <p style={{ color: 'red' }}>{numberError}</p>}
               {Data === 'add' && (
                 <>
                   <CFormLabel>
@@ -430,23 +473,23 @@ const OrganizationForm = () => {
                       <span aria-label="dollar-sign">$</span> <span aria-label="percentage">%</span>
                     </p>
                   )}
+                  <CFormLabel>
+                    Enrolled On<span style={{ color: 'red' }}>*</span>
+                  </CFormLabel>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon={cilCalendar} />
+                    </CInputGroupText>
+                    <CFormInput
+                      type="date"
+                      className="formInput"
+                      id="date"
+                      max={disableDate}
+                      required
+                    />
+                  </CInputGroup>
                 </>
               )}
-              <CFormLabel>
-                Enrolled On<span style={{ color: 'red' }}>*</span>
-              </CFormLabel>
-              <CInputGroup className="mb-3">
-                <CInputGroupText>
-                  <CIcon icon={cilCalendar} />
-                </CInputGroupText>
-                <CFormInput
-                  type="date"
-                  className="formInput"
-                  id="date"
-                  max={disableDate}
-                  required
-                />
-              </CInputGroup>
 
               <CFormLabel>
                 URL<span style={{ color: 'red' }}>*</span>
@@ -464,9 +507,16 @@ const OrganizationForm = () => {
               <span id="fail-message" style={{ color: 'red' }}></span>
 
               <div className="d-md-flex justify-content-md-center gap-2">
-                <CButton type="submit" onClick={handleClick}>
-                  Submit
-                </CButton>
+                {Data === 'add' && (
+                  <CButton type="submit" onClick={handleClick}>
+                    Submit
+                  </CButton>
+                )}
+                {Data === 'edit' && (
+                  <CButton type="submit" onClick={handleClick1}>
+                    Submit
+                  </CButton>
+                )}
                 <Link to="/forms/organization-table/">
                   <CButton type="submit">Cancel</CButton>
                 </Link>
