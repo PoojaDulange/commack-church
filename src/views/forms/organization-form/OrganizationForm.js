@@ -424,7 +424,7 @@ const OrganizationForm = () => {
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText>@</CInputGroupText>
-                    <CFormInput id="email" placeholder="Email" required />
+                    <CFormInput id="email" placeholder="Email" autoComplete="new-email" required />
                   </CInputGroup>
                   {emailExists === true && <p style={{ color: 'red' }}>Email Already Exists</p>}
                   {errorMessage === 'Invalid Email' && (
@@ -444,7 +444,13 @@ const OrganizationForm = () => {
                     <CInputGroupText>
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
-                    <CFormInput type="password" id="pass" placeholder="Password" required />
+                    <CFormInput
+                      type="password"
+                      id="pass"
+                      placeholder="Password"
+                      autoComplete="new-password"
+                      required
+                    />
                   </CInputGroup>
                   <CFormLabel>
                     Confirm Password<span style={{ color: 'red' }}>*</span>

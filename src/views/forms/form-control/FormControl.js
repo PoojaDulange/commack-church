@@ -505,6 +505,7 @@ const FormControl = () => {
                           type="email"
                           id="email"
                           placeholder={placeholder.email}
+                          autoComplete="new-email"
                           onChange={(e) => setEmail(e.target.value)}
                         />
                       </CInputGroup>
@@ -529,6 +530,7 @@ const FormControl = () => {
                           type="password"
                           id="password"
                           placeholder="Enter Password"
+                          autoComplete="new-password"
                           onChange={(e) => setPassword(e.target.value)}
                         />
                       </CInputGroup>
