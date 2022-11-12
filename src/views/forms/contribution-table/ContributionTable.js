@@ -98,33 +98,37 @@ const ContributionTable = () => {
     getData()
   }, [])
   const exportData = () => {
-    var rows = []
-    var headers = []
-    for (var i = 0; i < column.length; i++) {
-      headers[i] = column[i].name.props.children
-    }
-    rows.push(headers)
-    console.log(filteredChurches)
-    for (let i = 0; i < filteredChurches.length; i++) {
-      let column1 = filteredChurches[i].userName
-      let column2 = filteredChurches[i].contributionDate
-      let column3 = filteredChurches[i].category
-      let column4 = filteredChurches[i].comments
-      let column5 = filteredChurches[i].PledgedAmount
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Do you want to download the data') === true) {
+      var rows = []
+      var headers = []
+      for (var i = 0; i < column.length; i++) {
+        headers[i] = column[i].name.props.children
+      }
+      rows.push(headers)
+      console.log(filteredChurches)
+      for (let i = 0; i < filteredChurches.length; i++) {
+        let column1 = filteredChurches[i].userName
+        let column2 = filteredChurches[i].contributionDate
+        let column3 = filteredChurches[i].category
+        let column4 = filteredChurches[i].comments
+        let column5 = filteredChurches[i].PledgedAmount
 
-      rows.push([column1, column2, column3, column4, column5])
+        rows.push([column1, column2, column3, column4, column5])
+      }
+      let csvContent = 'data:text/csv;charset=utf-8,'
+      rows.forEach(function (rowArray) {
+        let row = rowArray.join(',')
+        csvContent += row + '\r\n'
+      })
+      var encodedUri = encodeURI(csvContent)
+      var link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', 'ContributionData.csv')
+      document.body.appendChild(link)
+      link.click()
+    } else {
     }
-    let csvContent = 'data:text/csv;charset=utf-8,'
-    rows.forEach(function (rowArray) {
-      let row = rowArray.join(',')
-      csvContent += row + '\r\n'
-    })
-    var encodedUri = encodeURI(csvContent)
-    var link = document.createElement('a')
-    link.setAttribute('href', encodedUri)
-    link.setAttribute('download', 'ContributionData.csv')
-    document.body.appendChild(link)
-    link.click()
   }
   return (
     <div className="text-center">

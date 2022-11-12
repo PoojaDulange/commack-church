@@ -135,30 +135,34 @@ function PeopleTable() {
   const exportData = () => {
     var rows = []
     var headers = []
-    for (var i = 0; i < column.length - 1; i++) {
-      headers[i] = column[i].name.props.children
-    }
-    rows.push(headers)
-    for (let i = 0; i < filteredChurches.length; i++) {
-      let column1 = filteredChurches[i].firstName
-      let column2 = filteredChurches[i].city
-      let column3 = filteredChurches[i].mobileNo
-      let column4 = filteredChurches[i].gender
-      let column5 = filteredChurches[i].email
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Do you want to download the data') === true) {
+      for (var i = 0; i < column.length - 1; i++) {
+        headers[i] = column[i].name.props.children
+      }
+      rows.push(headers)
+      for (let i = 0; i < filteredChurches.length; i++) {
+        let column1 = filteredChurches[i].firstName
+        let column2 = filteredChurches[i].city
+        let column3 = filteredChurches[i].mobileNo
+        let column4 = filteredChurches[i].gender
+        let column5 = filteredChurches[i].email
 
-      rows.push([column1, column2, column3, column4, column5])
+        rows.push([column1, column2, column3, column4, column5])
+      }
+      let csvContent = 'data:text/csv;charset=utf-8,'
+      rows.forEach(function (rowArray) {
+        let row = rowArray.join(',')
+        csvContent += row + '\r\n'
+      })
+      var encodedUri = encodeURI(csvContent)
+      var link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', 'PeopleData.csv')
+      document.body.appendChild(link)
+      link.click()
+    } else {
     }
-    let csvContent = 'data:text/csv;charset=utf-8,'
-    rows.forEach(function (rowArray) {
-      let row = rowArray.join(',')
-      csvContent += row + '\r\n'
-    })
-    var encodedUri = encodeURI(csvContent)
-    var link = document.createElement('a')
-    link.setAttribute('href', encodedUri)
-    link.setAttribute('download', 'PeopleData.csv')
-    document.body.appendChild(link)
-    link.click()
   }
 
   return (

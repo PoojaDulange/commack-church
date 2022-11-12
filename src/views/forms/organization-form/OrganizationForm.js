@@ -64,6 +64,7 @@ const OrganizationForm = () => {
   }
 
   const handleClick = async () => {
+    console.log('asd1')
     let password, cpass, email
     if (Data === 'add') {
       email = document.getElementById('email').value
@@ -181,26 +182,23 @@ const OrganizationForm = () => {
     }
   }
   const handleClick1 = async () => {
+    console.log('asd')
     let obj = placeholder
+    obj.mobileNo = obj.mobileNo.split('-').join('')
+    obj.telNo = obj.telNo.split('-').join('')
+    obj.zipcode = obj.zipcode.split('-').join('')
+    console.log(obj)
     const v3 = TELNO_REGEX.test(obj.telNo)
     const v4 = TELNO_REGEX.test(obj.mobileNo)
     const v5 = ZIP_REGEX.test(obj.zipcode)
     if (v3 === false || v4 === false) {
       setNumberError('Invalid Number')
       return
-    } else {
-      setNumberError('')
     }
     if (!v5) {
       setZipError('Invalid Zipcode')
       return
-    } else {
-      setZipError('')
     }
-    obj.mobileNo = obj.mobileNo.split('-').join('')
-    obj.telNo = obj.telNo.split('-').join('')
-    obj.zipcode = obj.zipcode.split('-').join('')
-    obj.enrolledOn = obj.enrolledOn.split('T')[0]
     if (confirm('Do You want to make changes') === true) {
       await axios.patch('/api/organization', obj, {
         headers: { Authorization: `Bearer ${token.user}` },
@@ -211,6 +209,7 @@ const OrganizationForm = () => {
   useEffect(() => {
     if (Data === 'edit') {
       const data = location.state
+      console.log(data)
       setPlaceholder({ ...placeholder, ...data })
     }
     if (Data === 'add') {

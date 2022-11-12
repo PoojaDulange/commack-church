@@ -71,28 +71,32 @@ const PledgedCategory = () => {
   const exportData = () => {
     var rows = []
     var headers = []
-    for (var i = 0; i < column.length - 1; i++) {
-      headers[i] = column[i].name.props.children
-    }
-    rows.push(headers)
-    console.log(filteredChurches)
-    for (let i = 0; i < filteredChurches.length; i++) {
-      let column1 = filteredChurches[i].name
-      let column2 = filteredChurches[i].description
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Do you want to download the data') === true) {
+      for (var i = 0; i < column.length - 1; i++) {
+        headers[i] = column[i].name.props.children
+      }
+      rows.push(headers)
+      console.log(filteredChurches)
+      for (let i = 0; i < filteredChurches.length; i++) {
+        let column1 = filteredChurches[i].name
+        let column2 = filteredChurches[i].description
 
-      rows.push([column1, column2])
+        rows.push([column1, column2])
+      }
+      let csvContent = 'data:text/csv;charset=utf-8,'
+      rows.forEach(function (rowArray) {
+        let row = rowArray.join(',')
+        csvContent += row + '\r\n'
+      })
+      var encodedUri = encodeURI(csvContent)
+      var link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', 'PleadgeCategoryData.csv')
+      document.body.appendChild(link)
+      link.click()
+    } else {
     }
-    let csvContent = 'data:text/csv;charset=utf-8,'
-    rows.forEach(function (rowArray) {
-      let row = rowArray.join(',')
-      csvContent += row + '\r\n'
-    })
-    var encodedUri = encodeURI(csvContent)
-    var link = document.createElement('a')
-    link.setAttribute('href', encodedUri)
-    link.setAttribute('download', 'PleadgeCategoryData.csv')
-    document.body.appendChild(link)
-    link.click()
   }
 
   return (
